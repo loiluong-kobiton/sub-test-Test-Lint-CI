@@ -61,10 +61,3 @@ jobs:
       yarn-test: 'yes'
       eslint: 'yes'
 
-  # build-doc:
-  #   name: Build API Doc V1
-  #   uses: kobiton/deployment/.github/workflows/ci-api-doc.yaml@master
-  #   with:
-  #     git-ref: ${{ github.event.inputs.git-ref }}
-  #     repo-name: api-doc-v1
-  #   secrets: inherit
