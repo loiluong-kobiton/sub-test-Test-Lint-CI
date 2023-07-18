@@ -32,10 +32,10 @@ on:
       - opened
 
 
-permissions:
-  checks: write
-  pull-requests: write
-  contents: write
+# permissions:
+#   checks: write
+#   pull-requests: write
+#   contents: write
 
 jobs:
   # greet:
@@ -55,6 +55,7 @@ jobs:
   
   test-auto:
     name: Yarn test auto
+    if: github.event_name != 'workflow_dispatch'
     uses: loiluong-kobiton/myTesting-CICD/.github/workflows/manual.yml@sub-main-3
     with:
       yarn-test: 'yes'
