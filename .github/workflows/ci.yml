@@ -42,11 +42,7 @@ permissions:
   contents: write
 
 jobs:
-  # greet:
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - name: Send greeting
-  #       run: echo "Hello this is testing install and test Node.js ${{ github.event.inputs.node-version }}"
+
 
   test-manual:
     name: Yarn test manual
