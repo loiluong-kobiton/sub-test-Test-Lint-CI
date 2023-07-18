@@ -1,0 +1,60 @@
+name: test from other repo
+on:
+  workflow_dispatch:
+    inputs:
+      node-version:
+        description: 'Node version'
+        required: false
+        type: string
+        default: 14.x
+      yarn-test:
+        description: 'Run Yarn test ?'
+        required: false
+        default: 'false'
+        type: choice
+        options:
+        - 'false'
+        - 'true'
+      eslint:
+        description: 'Run ESLint ?'
+        required: false
+        default: 'false'
+        type: choice
+        options:
+        - 'false'
+        - 'true'
+  
+  
+  push:
+    branches:
+      - main
+
+  pull_request:
+    branches:
+      - main
+    types:
+      - opened
+
+
+jobs:
+  # greet:
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Send greeting
+  #       run: echo "Hello this is testing install and test Node.js ${{ github.event.inputs.node-version }}"
+
+  test:
+    name: Yarn test
+    runs-on: ubuntu-latest
+    permissions:
+      checks: write
+      pull-requests: write
+      contents: write
+    steps:
+      - name: Run test yarn and lint
+        uses:  loiluong-kobiton/myTesting-CICD/.github/workflows/manual.yml@sub-main-3
+        with:
+          yarn-test: 'true'
+          eslint: 'true'
+
+
