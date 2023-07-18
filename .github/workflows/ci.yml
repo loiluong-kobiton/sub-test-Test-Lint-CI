@@ -48,7 +48,7 @@ jobs:
   
   test-auto:
     name: Yarn test auto
-    if: github.event_name != 'pull_request'
+    if: github.event_name == 'pull_request'
     uses: loiluong-kobiton/myTesting-CICD/.github/workflows/manual.yml@sub-main-3
     with:
       yarn-test: 'yes'
