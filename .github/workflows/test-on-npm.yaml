@@ -1,0 +1,83 @@
+name: Yarn test and ESLint
+on:
+  workflow_call:
+    inputs:
+      node-version:
+        description: 'Node version'
+        required: false
+        type: string
+        default: 14.x
+      yarn-test:
+        description: 'Run Yarn test ?'
+        required: false
+        default: 'false'
+        type: choice
+        options:
+        - 'false'
+        - 'true'
+      eslint:
+        description: 'Run ESLint ?'
+        required: false
+        default: 'false'
+        type: choice
+        options:
+        - 'false'
+        - 'true'
+
+
+  pull_request:
+    branches:
+      - main
+      - master
+    types:
+      - opened
+env:
+  NPM_TOKEN: ${{ secrets.NPM_REGISTRY_AUTH_TOKEN }}
+
+permissions:
+  id-token: write   # This is required for requesting the JWT
+  contents: read    # This is required for actions/checkout
+
+jobs:
+    test:
+      name: Yarn test and ESLint
+      runs-on: ubuntu-latest
+      permissions:
+        checks: write
+        pull-requests: write
+        contents: write
+      steps:
+        - name: Clone Repository (Latest)
+          uses: actions/checkout@v3
+  
+        - name: Install Node.js ${{ github.event.inputs.node-version || '14.x' }}
+          id: install-node-manually
+          uses: actions/setup-node@v3
+          with:
+            node-version: ${{ github.event.inputs.node-version || '14.x' }}
+          
+        - name: Yarn test
+          id: yarn-test
+          if: inputs.yarn-test == 'true'
+          uses: ArtiomTr/jest-coverage-report-action@v2
+          with:
+            test-script: yarn test
+            annotations: all
+        
+        - name: Lint Action 
+          id: eslint
+          if: inputs.eslint == 'true'
+          uses: wearerequired/lint-action@v2.3.0
+          continue-on-error: true
+          with:
+            eslint: true
+            continue_on_error: false
+
+
+        - name: Checking steps status
+          run: |
+            echo "Yarn test status: "${{ steps.yarn-test.outcome }}
+            echo "Yarn lint status: "${{ steps.eslint.outcome }}
+            if [ ${{ steps.yarn-test.outcome }} == 'failure' ] || [ ${{ steps.eslint.outcome }} == 'failure' ]; then
+              exit 1
+            fi

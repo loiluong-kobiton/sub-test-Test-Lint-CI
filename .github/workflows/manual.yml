@@ -1,0 +1,146 @@
+name: test and get result on commit
+on:
+  workflow_dispatch:
+    inputs:
+      node-version:
+        description: 'Node version'
+        required: false
+        type: string
+        default: 14.x
+      yarn-test:
+        description: 'Run Yarn test ?'
+        required: false
+        default: 'false'
+        type: choice
+        options:
+        - 'false'
+        - 'true'
+      eslint:
+        description: 'Run ESLint ?'
+        required: false
+        default: 'false'
+        type: choice
+        options:
+        - 'false'
+        - 'true'
+  
+  
+  push:
+    branches:
+      - main
+
+  pull_request:
+    # branches:
+    #   - main
+    types:
+      - opened
+
+
+jobs:
+  # greet:
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Send greeting
+  #       run: echo "Hello this is testing install and test Node.js ${{ github.event.inputs.node-version }}"
+
+  test:
+    name: Yarn test
+    runs-on: ubuntu-latest
+    permissions:
+      checks: write
+      pull-requests: write
+      contents: write
+    steps:
+      - name: Clone Repository (Latest)
+        uses: actions/checkout@v3
+
+      - name: Install Node.js ${{ github.event.inputs.node-version || '14.x' }}
+        id: install-node-manually
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ github.event.inputs.node-version || '14.x' }}
+      
+
+
+      - name: Install dependencies
+        run: |
+          # echo "Install node status: ${{ steps.install.outcome }}"
+          npm install --global yarn
+          npm install
+          
+
+
+      - uses: jwalton/gh-find-current-pr@v1
+        id: findPr
+
+
+      - name: check coverage
+        id: coverage
+        if: inputs.yarn-test == 'true'
+        continue-on-error: true
+        uses: ArtiomTr/jest-coverage-report-action@v2
+        with:
+          # package-manager: yarn
+          test-script: yarn test
+          # output: comment, report-markdown
+          skip-step: install
+          annotations: all
+          prnumber: ${{ steps.findPr.outputs.number }}
+
+
+         
+
+
+      - name: Install ESlint and Babel
+        run: |
+          npm install eslint eslint-plugin-standard eslint-config-standard --save-dev
+          npm install eslint-plugin-babel@latest --save-dev
+
+       
+
+
+      - name: Lint Action 
+        id: eslint
+        if: inputs.eslint == 'true'
+        uses: wearerequired/lint-action@v2.3.0
+        continue-on-error: true
+        with:
+          eslint: true
+          continue_on_error: false
+          
+
+      # - name: Create commit comment
+      #   uses: peter-evans/commit-comment@v2
+      #   # continue-on-error: true
+      #   if: steps.coverage.outcome == 'failure'
+      #   with:
+      #     body: |
+      #       Status of following steps:
+      #       - Yarn test: ${{ steps.coverage.outcome }}
+      #       - Yarn lint: ${{ steps.eslint.outcome }}
+
+
+
+      - name: echo Test status
+        run: |
+          echo "Yarn test status: "${{ steps.coverage.outcome }}
+          echo "Yarn lint status: "${{ steps.eslint.outcome }}
+          if [ ${{ steps.coverage.outcome }} == 'failure' ] || [ ${{ steps.eslint.outcome }} == 'failure' ]; then
+            exit 1
+          fi
+        
+
+        
+  
+      
+        
+  # build:
+  #   runs-on: ubuntu-latest
+  #   needs: test
+  #   steps:
+  #     - name: building step
+  #       run: |
+  #         echo "Hello ${{ github.event.inputs.node-version || '14.x' }}"
+  #         echo "status of test : ${{ needs.test.result }}"
+      
+
