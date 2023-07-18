@@ -46,11 +46,20 @@ jobs:
       eslint: ${{ inputs.eslint }}
   
   
+  # test-auto:
+  #   name: Yarn test auto
+  #   if: github.event_name == 'pull_request'
+  #   uses: loiluong-kobiton/myTesting-CICD/.github/workflows/manual.yml@sub-main-3
+  #   with:
+  #     yarn-test: 'yes'
+  #     eslint: 'yes'
+
   test-auto:
     name: Yarn test auto
+    runs-on: ubuntu-latest
     if: github.event_name == 'pull_request'
-    uses: loiluong-kobiton/myTesting-CICD/.github/workflows/manual.yml@sub-main-3
-    with:
-      yarn-test: 'yes'
-      eslint: 'yes'
+    steps:
+      - run: | 
+          echo  ${{ inputs.yarn-test }}
+          echo ${{ inputs.eslint }}
 
