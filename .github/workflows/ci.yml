@@ -7,24 +7,20 @@ on:
         required: false
         type: string
         default: 14.x
+        
       yarn-test:
         description: 'Run Yarn test ?'
         required: false
-        default: 'false'
-        type: choice
-        options:
-        - 'false'
-        - 'true'
+        default: 'no'
+        type: string
+
       eslint:
         description: 'Run ESLint ?'
         required: false
-        default: 'false'
-        type: choice
-        options:
-        - 'false'
-        - 'true'
-  
-  
+        default: 'no'
+        type: string
+      
+        
   push:
     branches:
       - main
@@ -43,8 +39,17 @@ jobs:
   #     - name: Send greeting
   #       run: echo "Hello this is testing install and test Node.js ${{ github.event.inputs.node-version }}"
 
-  test:
-    name: Yarn test
+  test-manual:
+    name: Yarn test manual
+    if: github.event_name =='workflow_dispatch'
+    uses: loiluong-kobiton/myTesting-CICD/.github/workflows/manual.yml@sub-main-3
+    with:
+      yarn-test: ${{ inputs.yarn-test }}
+      eslint: ${{ inputs.eslint }}
+  
+  
+  test-auto:
+    name: Yarn test auto
     uses: loiluong-kobiton/myTesting-CICD/.github/workflows/manual.yml@sub-main-3
     with:
       yarn-test: 'true'
