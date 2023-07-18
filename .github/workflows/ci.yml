@@ -21,19 +21,12 @@ on:
         type: string
       
         
-  # push:
-  #   branches:
-  #     - main
 
   pull_request:
     branches:
       - main
     types:
       - opened
-
-  # pull_request_target:
-  #   branches:
-  #     - main
 
 
 permissions:
@@ -55,8 +48,7 @@ jobs:
   
   test-auto:
     name: Yarn test auto
-    if: github.event_name != 'pull_request' && github.event.pull_request.merged == false
-     
+    if: github.event_name == 'pull_request'
     uses: loiluong-kobiton/myTesting-CICD/.github/workflows/manual.yml@sub-main-3
     with:
       yarn-test: 'yes'
