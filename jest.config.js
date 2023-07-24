@@ -7,6 +7,15 @@ module.exports = {
         statements: 50,
       },
     },
+    module: {
+      rules: [
+        {
+          options: {
+            failOnError: true
+          }
+        }
+      ]
+    }
   };
 
 // module.exports = {
