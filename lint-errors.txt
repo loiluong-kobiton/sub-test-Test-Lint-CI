@@ -1,0 +1,16 @@
+yarn run v1.22.19
+$ gulp lint
+[16:42:19] Requiring external module @babel/register
+[16:42:20] Using gulpfile ~/Desktop/myTesting/sub-testing/gulpfile.babel.js
+[16:42:20] Starting 'lint'...
+
+src/index.js
+  line 5   col 1   Use the function form of "use strict".
+  line 22  col 2   Missing semicolon.
+  line 8   col 16  'require' is not defined.
+  line 10  col 1   'module' is not defined.
+
+  ⚠  4 warnings
+
+[16:42:20] Finished 'lint' after 15 ms
+Done in 0.73s.
